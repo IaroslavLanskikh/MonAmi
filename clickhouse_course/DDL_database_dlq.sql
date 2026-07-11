@@ -1,13 +1,11 @@
-CREATE TABLE IF NOT EXISTS silver.ym_web_hits (
-    -- Дата и время
+CREATE DATABASE IF NOT EXISTS dlq
+COMMENT 'Dead Letter Queue, кладём данные не прошедшие через фильтры';
+
+CREATE TABLE IF NOT EXISTS dlq.bronze_silver_dlq (
     event_date                       Date                             COMMENT 'Дата события по UTC-0',
     event_time                       DateTime                         COMMENT 'Дата и время события по UTC-0',
-    
-    -- Идентификаторы
     user_id                          UInt64                           COMMENT 'Уникальный идентификатор посетителя сайта',
     watch_id                         UInt64                           COMMENT 'Уникальный идентификатор конкретного просмотра страницы (хита)',
-    
-    -- Информация о событии
     trafic_source_id                 Int8                             COMMENT 'Внутренний числовой код типа источника трафика (прямой заход, реклама и т.д.)',
     utm_source                       LowCardinality(String)           COMMENT 'UTM-метка источника трафика. Может содержать пустые строки',
     utm_medium                       LowCardinality(String)           COMMENT 'UTM-метка типа трафика',
@@ -19,8 +17,6 @@ CREATE TABLE IF NOT EXISTS silver.ym_web_hits (
     search_frase                     String                           COMMENT 'Текст поискового запроса (если переход был из поисковой системы)',
     url                              String                           COMMENT 'Полный адрес просматриваемой страницы сайта',
     url_domain                       LowCardinality(String)           COMMENT 'Домен сайта, на котором происходит просмотр',
-    
-    -- Любая дополнительная информация
     region_id                        Int32                            COMMENT 'Числовой идентификатор географического региона пользователя',
     os                               Int16                            COMMENT 'Внутренний числовой идентификатор операционной системы',
     user_agent                       Int16                            COMMENT 'Внутренний числовой идентификатор браузера',
@@ -29,22 +25,21 @@ CREATE TABLE IF NOT EXISTS silver.ym_web_hits (
     mobile_phone_model               LowCardinality(String)           COMMENT 'Текстовое название модели устройства. Может содержать обрывки парсинга и пустые строки',
     resolution_width                 UInt16                           COMMENT 'Разрешение экрана устройства в пикселях по ширине',
     resolution_height                UInt16                           COMMENT 'Разрешение экрана устройства в пикселях по высоте',
+    is_robot                         Int8                             COMMENT 'Флаг антифрод-системы (1 — визит совершен роботом, 0 — живым человеком)',
     is_not_bounce                    Boolean                          COMMENT 'Флаг «не-отказа» (1 — качественный визит, 0 — быстрый уход (отказ))',
     goals_reached                    Array(Int32)                     COMMENT 'Массив числовых идентификаторов целей, достигнутых в рамках хита. Например, пользователь добавил товар в корзину',
     param_order_id                   String                           COMMENT 'Номер оформленного заказа. Заполняется вместе с суммой при покупке',
     param_price                      UInt32                           COMMENT 'Сумма заказа. Заполняется только в момент совершения покупки на этой странице',
-    
-    -- Технические поля (Meta)
-    _insert_into_silver                  DateTime    DEFAULT now()        COMMENT 'Время записи данных в таблицу из бронзового слоя',
-    _source_system                       LowCardinality(String)           COMMENT 'Источник данных'
+    _ingestion_time                  DateTime    DEFAULT now()        COMMENT 'Время записи данных в таблицу - бронзовый слой',
+    _insert_into_dlq                 DateTime    DEFAULT now()        COMMENT 'Время записи данных в таблицу '
 )
 -- Движок 
-ENGINE = ReplacingMergeTree(_insert_into_silver)
+ENGINE = MergeTree()
 -- При необходимости скорректируйте в зависимости от объемов данных
-PARTITION BY toYYYYMM(_insert_into_silver)
+PARTITION BY toYYYYMM(_ingestion_time)
 -- При необходимости скорректируйте в зависимости от сценариев работы с таблицей
-ORDER BY (event_time,user_id,url)
+ORDER BY (event_date,user_id)
 -- Время жизни данных
-TTL _insert_into_silver + INTERVAL 3 YEAR
+TTL _ingestion_time + INTERVAL 3 YEAR
 -- Описание таблицы
-COMMENT 'Очищенные данные из bronze.ym_web_hits. Выгрузка из Яндекс Метрики. За основу взяты анонимизированные логи веб-аналитики из документации ClickHouse.'
+COMMENT 'Dead Letter Queue, данные не прошедшие из bronze.ym_web_hits в silver.ym_web_hits из bronze'
