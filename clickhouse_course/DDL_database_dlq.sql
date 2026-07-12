@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS dlq.bronze_silver_dlq (
     goals_reached                    Array(Int32)                     COMMENT 'Массив числовых идентификаторов целей, достигнутых в рамках хита. Например, пользователь добавил товар в корзину',
     param_order_id                   String                           COMMENT 'Номер оформленного заказа. Заполняется вместе с суммой при покупке',
     param_price                      UInt32                           COMMENT 'Сумма заказа. Заполняется только в момент совершения покупки на этой странице',
-    _ingestion_time                  DateTime    DEFAULT now()        COMMENT 'Время записи данных в таблицу - бронзовый слой',
+    _ingestion_time                  DateTime                         COMMENT 'Время записи данных в таблицу - бронзовый слой',
     _insert_into_dlq                 DateTime    DEFAULT now()        COMMENT 'Время записи данных в таблицу '
 )
 -- Движок 
