@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS dlq
 COMMENT 'Dead Letter Queue, кладём данные не прошедшие через фильтры';
-
+ 
 CREATE TABLE IF NOT EXISTS dlq.bronze_silver_dlq (
     event_date                       Date                             COMMENT 'Дата события по UTC-0',
     event_time                       DateTime                         COMMENT 'Дата и время события по UTC-0',
@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS dlq.bronze_silver_dlq (
     goals_reached                    Array(Int32)                     COMMENT 'Массив числовых идентификаторов целей, достигнутых в рамках хита. Например, пользователь добавил товар в корзину',
     param_order_id                   String                           COMMENT 'Номер оформленного заказа. Заполняется вместе с суммой при покупке',
     param_price                      UInt32                           COMMENT 'Сумма заказа. Заполняется только в момент совершения покупки на этой странице',
+    _source_system                   LowCardinality(String)           COMMENT 'Источник данных',
     _ingestion_time                  DateTime                         COMMENT 'Время записи данных в таблицу - бронзовый слой',
     _insert_into_dlq                 DateTime    DEFAULT now()        COMMENT 'Время записи данных в таблицу '
 )

@@ -1,4 +1,7 @@
 -- Шаблон запроса для очистки и трансформации данных (Бронза -> Серебро)
+CREATE MATERIALIZED VIEW IF NOT EXISTS etl.mv_bronze_to_silver_hits
+TO silver.ym_web_hits
+AS 
 SELECT *
     EXCEPT (
         is_robot,
