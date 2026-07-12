@@ -30,7 +30,8 @@ INSERT INTO bronze.ym_web_hits
 	is_not_bounce,
 	goals_reached,
 	param_order_id,
-	param_price
+	param_price,
+	_source_system
 )
 SELECT
     -- Перечисляем колонки в том порядке, как в таблице.
@@ -61,7 +62,8 @@ SELECT
 	IsNotBounce,
 	GoalsReached,
 	ParamOrderID,
-	ParamPrice
+	ParamPrice,
+	_file
 FROM url(
     -- Две точки ".." означают диапазон ОТ и ДО
     -- Пример ссылки https://huggingface.co/datasets/ivannatarov/clickhouse_course/resolve/main/hits_2013_week_{45..50}.csv

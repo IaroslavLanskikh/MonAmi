@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS silver.ym_web_hits (
     -- Технические поля (Meta)
     _insert_into_silver                  DateTime    DEFAULT now()        COMMENT 'Время записи данных в таблицу из бронзового слоя',
     _source_system                       LowCardinality(String)           COMMENT 'Источник данных'
+    
+    
 )
 -- Движок 
 ENGINE = ReplacingMergeTree(_insert_into_silver)
