@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS dlq
 COMMENT 'Dead Letter Queue, кладём данные не прошедшие через фильтры';
- 
+
 CREATE TABLE IF NOT EXISTS dlq.bronze_silver_dlq (
     event_date                       Date                             COMMENT 'Дата события по UTC-0',
     event_time                       DateTime                         COMMENT 'Дата и время события по UTC-0',
