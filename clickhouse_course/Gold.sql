@@ -4,9 +4,9 @@ SELECT
 
  user_id,
 
- dictGet('dicts.trafic_source', 'trafic_source_name', argMax(trafic_source_id, event_time)) AS last_trafic_source_id,
+ dictGet('dicts.trafic_source', 'trafic_source_name', argMax(trafic_source_id, event_time)) AS last_trafic_source,
 
- dictGet('dicts.hierarchy_region','region_name',argMin(region_id, event_time)) AS first_region_id,
+ dictGet('dicts.hierarchy_region','region_name',argMin(region_id, event_time)) AS first_region,
 
  COUNT(watch_id) AS watch_cnt,
 
