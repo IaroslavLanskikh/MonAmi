@@ -1,4 +1,7 @@
 -- Шаблон запроса для очистки и трансформации данных (Бронза -> Карантин)
+CREATE MATERIALIZED VIEW IF NOT EXISTS etl.mv_bronze_to_dlq_hits
+TO dlq.bronze_silver_dlq
+AS
 SELECT * 
     	, current_timestamp() _insert_into_dlq 
     	-- Время загрузки в Карантин / Можно засунуть в DDL таблицы в карантине

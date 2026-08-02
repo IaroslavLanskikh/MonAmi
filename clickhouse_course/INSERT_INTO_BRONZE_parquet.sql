@@ -67,8 +67,8 @@ SELECT
 FROM url(
     -- Две точки ".." означают диапазон ОТ и ДО
     -- Пример ссылки https://huggingface.co/datasets/ivannatarov/clickhouse_course/resolve/main/hits_2013_week_{45..50}.csv
-	'https://huggingface.co/datasets/ivannatarov/clickhouse_course/resolve/main/hits_2013_week_{45..47}.csv',
-    'CSVWithNames'
+	'https://huggingface.co/datasets/ivannatarov/clickhouse_course/resolve/main/parquet-files/hits_2014-01-01.parquet',
+    'Parquet'
 )
 SETTINGS
     -- Разрешаем перенаправления (нужно для S3/HuggingFace)
